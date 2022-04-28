@@ -1,0 +1,111 @@
+﻿@model TodoList.ViewModels.AllRecords
+
+@{
+    ViewBag.Title = "Get Todo";
+}
+
+<style>
+    .cmp {
+        color: darkseagreen;
+        display: none;
+    }
+</style>
+
+<p style="padding-top: 18px;">
+    <button type="button" class="btn btn-block" style="font-size: 20px;"> @Html.ActionLink("Add Todo", "AddTodo")</button>
+</p>
+
+<div id="exTab2" class="container">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#1" data-toggle="tab">Get All</a>
+        </li>
+        <li>
+            <a href="#2" data-toggle="tab">Completed</a>
+        </li>
+        <li>
+            <a href="#3" data-toggle="tab">Deleted</a>
+        </li>
+    </ul>
+
+    <div class="tab-content ">
+        <div class="tab-pane active" id="1">
+            <ul class="list-group">
+                @foreach (var item in Model.Todos)
+                {
+                    <li class="list-group-item">
+                        @if (item.MarkedDone)
+                        {
+                            @Html.DisplayFor(modelItem => item.Description)
+                            <span class="text-success">&nbsp;&nbsp;&nbsp;Completed.</span>
+                        }
+                        else
+                        {
+                            <input type="checkbox" value="@item.MarkedDone" id="@item.ID d" onclick="Tick(@item.ID)" />
+                            @Html.DisplayFor(modelItem => item.Description)
+                            <span>
+                                @Html.ActionLink("Edit", "UpdateTodoList", new { id = item.ID }) |
+                                @Html.ActionLink("Delete", "DeleteTodo", new { id = item.ID })
+                            </span>
+                            <span id="@item.ID s" class="cmp">&nbsp;&nbsp;&nbsp;Completed.</span>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="tab-pane" id="2">
+            <ul class="list-group">
+                @foreach (var item in Model.Todos)
+                {
+                    <li class="list-group-item">
+                        @if (item.MarkedDone)
+                        {
+                            @Html.DisplayFor(modelItem => item.Description)
+                            <span class="text-success">&nbsp;&nbsp;&nbsp;Completed.</span>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="tab-pane" id="3">
+            <ul class="list-group">
+                @foreach (var item in Model.Histories)
+                {
+                    <li class="list-group-item">
+                            @Html.DisplayFor(modelItem => item.Description)
+                            <span class="text-danger">&nbsp;&nbsp;&nbsp;Deleted.</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function Tick(id) {
+        if (document.getElementById("" + id + ' d').checked == true) {
+            //document.getElementById("" + id).style.display = "none";
+            //document.getElementById("" + id + " d").disabled = true;
+            //document.getElementById("" + id + " s").style.display = "inline-block";
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("UpdateTodo")',
+                data: '{id:' + id +' }',
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    alert("Data has been added successfully.");
+                    location.reload();
+                },
+                error: function () {
+                    alert("Error while inserting data");
+                }
+            });
+
+
+        }
+    }
+</script>
